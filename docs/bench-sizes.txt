@@ -1,0 +1,5 @@
+recovery log: 1000 records, 121000 bytes
+recovery log: 10000 records, 1210000 bytes
+recovery log: 100000 records, 12100000 bytes
+recovery log: 1000000 records, 121000000 bytes
+compaction input log: 60500000 bytes
