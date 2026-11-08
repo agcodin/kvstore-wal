@@ -70,7 +70,7 @@ pub fn run_one(seed: u64) -> Result<(), String> {
             Step::Del(key)
         } else {
             let vlen = rng.below(40);
-            let v: Vec<u8> = (0..vlen).map(|_| rng.next() as u8).collect();
+            let v: Vec<u8> = (0..vlen).map(|_| rng.next_u64() as u8).collect();
             Step::Put(key, v)
         };
         let res = match &step {

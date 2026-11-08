@@ -1,0 +1,60 @@
+
+running 12 tests
+test record::tests::bit_flip_is_detected ... ignored
+test record::tests::every_truncation_is_incomplete ... ignored
+test record::tests::huge_length_is_corrupt_not_incomplete ... ignored
+test record::tests::put_len_matches_encoding ... ignored
+test record::tests::roundtrip ... ignored
+test store::tests::auto_compaction_triggers ... ignored
+test store::tests::compaction_shrinks_log_and_preserves_state ... ignored
+test store::tests::oversized_record_rejected ... ignored
+test store::tests::put_get_delete ... ignored
+test store::tests::reopen_replays_log ... ignored
+test store::tests::scan_prefix_is_ordered_and_bounded ... ignored
+test store::tests::torn_tail_is_cut_and_new_writes_survive ... ignored
+
+test result: ok. 0 passed; 0 failed; 12 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+put_100B/no_fsync       time:   [2.0070 µs 2.1102 µs 2.2164 µs]
+                        thrpt:  [451.19 Kelem/s 473.89 Kelem/s 498.24 Kelem/s]
+Found 4 outliers among 100 measurements (4.00%)
+  4 (4.00%) high mild
+put_100B/fsync_each     time:   [3.0450 ms 3.0739 ms 3.1353 ms]
+                        thrpt:  [318.95  elem/s 325.32  elem/s 328.41  elem/s]
+Found 1 outliers among 10 measurements (10.00%)
+  1 (10.00%) high mild
+
+get/hit_100k_keys       time:   [148.72 ns 154.12 ns 160.42 ns]
+                        thrpt:  [6.2337 Melem/s 6.4886 Melem/s 6.7241 Melem/s]
+
+recovery/open_records/1000
+                        time:   [140.55 µs 147.91 µs 160.39 µs]
+                        thrpt:  [6.2347 Melem/s 6.7607 Melem/s 7.1147 Melem/s]
+Found 4 outliers among 10 measurements (40.00%)
+  2 (20.00%) low mild
+  1 (10.00%) high mild
+  1 (10.00%) high severe
+recovery/open_records/10000
+                        time:   [1.4101 ms 1.4377 ms 1.4607 ms]
+                        thrpt:  [6.8459 Melem/s 6.9556 Melem/s 7.0916 Melem/s]
+recovery/open_records/100000
+                        time:   [16.263 ms 16.412 ms 16.540 ms]
+                        thrpt:  [6.0460 Melem/s 6.0930 Melem/s 6.1488 Melem/s]
+recovery/open_records/1000000
+                        time:   [175.31 ms 177.19 ms 178.65 ms]
+                        thrpt:  [5.5975 Melem/s 5.6436 Melem/s 5.7043 Melem/s]
+
+compaction/100k_keys_5x_overwritten
+                        time:   [20.413 ms 20.812 ms 21.423 ms]
+
+finished

@@ -10,6 +10,10 @@ pub enum Error {
     Io(io::Error),
     /// Key or value too large for one record.
     TooLarge,
+    /// A failed write could not be rolled back, so the log may hold a partial
+    /// record. Writes are refused until the store is reopened and recovery
+    /// cuts the log back to its last valid record.
+    Poisoned,
 }
 
 impl fmt::Display for Error {
@@ -17,6 +21,7 @@ impl fmt::Display for Error {
         match self {
             Error::Io(e) => write!(f, "io error: {e}"),
             Error::TooLarge => write!(f, "record too large"),
+            Error::Poisoned => write!(f, "store poisoned by a failed write; reopen it"),
         }
     }
 }
@@ -72,6 +77,7 @@ pub struct Store<S: Storage = FileStorage> {
     log_len: u64,
     live_bytes: u64,
     recovery: Recovery,
+    poisoned: bool,
 }
 
 impl Store<FileStorage> {
@@ -108,6 +114,7 @@ impl<S: Storage> Store<S> {
             opts,
             log_len: pos as u64,
             live_bytes,
+            poisoned: false,
             recovery: Recovery {
                 records,
                 valid_bytes: pos as u64,
@@ -183,6 +190,9 @@ impl<S: Storage> Store<S> {
 
     /// Rewrite the log as one put per live key.
     pub fn compact(&mut self) -> Result<()> {
+        if self.poisoned {
+            return Err(Error::Poisoned);
+        }
         let mut buf = Vec::with_capacity(self.live_bytes as usize);
         for (k, v) in &self.index {
             record::encode(
@@ -199,11 +209,31 @@ impl<S: Storage> Store<S> {
     }
 
     fn append(&mut self, op: &Op) -> Result<()> {
+        if self.poisoned {
+            return Err(Error::Poisoned);
+        }
         let mut buf = Vec::new();
         record::encode(op, &mut buf);
-        self.storage.append(&buf)?;
-        if self.opts.sync == SyncPolicy::Always {
-            self.storage.sync()?;
+        let written = self.storage.append(&buf).and_then(|()| {
+            if self.opts.sync == SyncPolicy::Always {
+                self.storage.sync()
+            } else {
+                Ok(())
+            }
+        });
+        if let Err(e) = written {
+            // The log may now end in a partial record, or a complete one that
+            // was never confirmed. Anything appended after it would sit behind
+            // bytes that recovery stops at, or would revive this failed write.
+            // Cut back to the last confirmed length before accepting more.
+            let rolled_back = self
+                .storage
+                .truncate(self.log_len)
+                .and_then(|()| self.storage.sync());
+            if rolled_back.is_err() {
+                self.poisoned = true;
+            }
+            return Err(e.into());
         }
         self.log_len += buf.len() as u64;
         Ok(())

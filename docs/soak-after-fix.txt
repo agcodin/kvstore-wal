@@ -1,0 +1,2 @@
+     Running `target/release/soak --iterations 200000`
+200000 runs, 0 found a bug (21.2s)

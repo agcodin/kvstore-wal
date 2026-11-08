@@ -18,7 +18,7 @@ impl Rng {
     pub fn new(seed: u64) -> Self {
         Rng(seed.wrapping_mul(0x9E37_79B9_7F4A_7C15) | 1)
     }
-    pub fn next(&mut self) -> u64 {
+    pub fn next_u64(&mut self) -> u64 {
         let mut x = self.0;
         x ^= x >> 12;
         x ^= x << 25;
@@ -28,7 +28,7 @@ impl Rng {
     }
     /// Uniform in `0..n` (n > 0).
     pub fn below(&mut self, n: usize) -> usize {
-        (self.next() % n as u64) as usize
+        (self.next_u64() % n as u64) as usize
     }
     pub fn chance(&mut self, percent: usize) -> bool {
         self.below(100) < percent
@@ -121,7 +121,7 @@ impl SimDisk {
             let bad = 1 + g.rng.below(kept.len().min(8));
             let at = kept.len() - bad;
             for b in &mut kept[at..] {
-                *b = g.rng.next() as u8;
+                *b = g.rng.next_u64() as u8;
             }
         }
         g.durable.extend_from_slice(&kept);
