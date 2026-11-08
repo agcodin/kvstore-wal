@@ -1,0 +1,21 @@
+[package]
+name = "kvstore-wal"
+version = "0.1.0"
+edition = "2021"
+description = "A small durable key-value store: in-memory index over a checksummed write-ahead log"
+license = "MIT"
+
+[dependencies]
+crc32fast = "1"
+
+[dev-dependencies]
+proptest = "1"
+criterion = "0.5"
+tempfile = "3"
+
+[[bench]]
+name = "kv"
+harness = false
+
+[profile.release]
+debug = true

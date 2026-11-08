@@ -1,0 +1,6 @@
+10000 runs, 7566 found a bug (0.5s)
+  seed 0: step 8: after crash during Del([99, 55]), store has 3 keys; expected 3 (write lost) or 2 (write kept)
+  seed 3: step 92: acknowledged data lost after power loss: store has 22 keys, model has 23
+  seed 4: step 10: after crash during Put([99, 49, 49], []), store has 4 keys; expected 3 (write lost) or 4 (write kept)
+  seed 5: step 69: acknowledged data lost after power loss: store has 24 keys, model has 26
+  seed 6: step 14: after crash during Put([98, 47, 57], [71, 0, 51, 146, 34, 243, 207, 252, 239, 154, 147, 30, 219, 107, 227, 66, 85, 198, 139, 80, 110, 147, 42, 147, 149, 37, 234, 12]), store has 4 keys; expected 7 (write lost) or 8 (write kept)
